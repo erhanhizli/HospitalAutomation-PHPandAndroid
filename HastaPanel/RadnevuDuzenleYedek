@@ -1,0 +1,179 @@
+<?php
+$servername = "localhost";
+$database = "myyhospital_1";
+$username = "myyhospital_user";
+$password = "qgR-@1xk8RGm";
+// Create connection
+$conn = mysqli_connect($servername, $username, $password, $database);
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+
+
+
+
+
+	
+	if (isset($_POST["randevubilgileri"])){
+		
+		echo $_POST["randevubilgileri"];
+	}
+	
+
+
+
+
+
+
+
+
+
+
+if(isset($_POST['submit'])){
+
+      session_start(); 
+    $_SESSION["TC"];
+    if( empty($_POST['Bolum']) || empty($_POST['Doktor']) || empty($_POST['Tarih'])|| empty($_POST['Saat'])) {
+       echo '<script>alert("Lütfen bütün alanları doldurunuz.")</script>';
+   } else {    
+   
+$HastaTC = $_SESSION["TC"]  ;
+$Bolum = mysqli_real_escape_string($conn, $_POST['Bolum']);
+$Doktor = $_POST['Doktor'];
+$Tarih = mysqli_real_escape_string($conn, $_POST['Tarih']);
+$Saat = mysqli_real_escape_string($conn, $_POST['Saat']);
+
+$sql = "SELECT Tarih FROM Randevular WHERE DoktorID = '$Doktor' AND Tarih='$Tarih' AND Saat='$Saat'";
+
+$result = mysqli_query($conn,$sql);
+
+if(mysqli_num_rows($result)>0){
+
+ echo '<script>alert("Aynı tarih ve saatte randevu var. Lütfen başka bir zamana deneyiniz.")</script>';
+}else{
+    $sql = "UPDATE `Randevular` SET `Bolum`='$Bolum',`DoktorID`='$Doktor',`Tarih`='$Tarih',`Saat`='$Saat' WHERE HastaTC='$HastaTC'";
+if(mysqli_query($conn, $sql)){
+    echo '<script>alert("Randevu Oluşturuldu.")</script>';
+} else{
+    echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
+}
+}
+}
+}
+
+
+
+mysqli_close($conn);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+
+  <?php include('panelnav.php'); ?>
+
+<div>
+  
+<div>
+  <?php
+   $_SESSION["TC"];
+        
+   $TC= $_SESSION["TC"]  ;
+$conn = mysqli_connect("localhost", "myyhospital_user", "qgR-@1xk8RGm", "myyhospital_1");
+// Check connection
+if ($conn->connect_error) {
+die("Connection failed: " . $conn->connect_error);
+}
+$sql = "SELECT * FROM Randevular WHERE HastaTC='$TC' ";
+$result = $conn->query($sql);
+if ($result->num_rows > 0) {
+// output data of each row
+while($row = $result->fetch_assoc()) { ?>
+
+  
+  <form method="POST">
+
+  <div class="form-group">
+    <label for="exampleInputEmail1">Hasta TC:</label>
+    <?php    session_start(); 
+         echo $_SESSION["TC"]; 
+         ?>
+  </div>
+  <div class="form-group">
+    <label for="exampleFormControlSelect1" >Bolum</label>
+    <select class="form-control" id="Bolum" name="Bolum">
+      <option value="Aile Hekimligi">Aile Hekimligi</option>
+      <option value="İç Hastalıkları(Dahiliye)">İç Hastalıkları(Dahiliye)</option>
+      <option value="Göz Hastalıkları">Göz Hastalıkları</option>
+      <option value="Çocukuk Hastaliklari">Çocuk Hastalıkları</option>
+      <option value="Beslenme ve Diyet">Beslenme Ve Diyet</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Doktor</label>
+    <select class="form-control" id="Doktor" name="Doktor">
+      <option >---Aile Hekimliği--</option>
+      <option value="951456753">Op.Dr.Rıfat Hızlı</option>
+      <option value="516456753">Prof.Dr.Abrek Teber</option>
+      <option value="423574568">Prof.Dr.Burak Müderrisoğlu</option>
+      <option >---İç Hastalıkları(Dahiliye)--</option>
+      <option value="423564567">Dr.Kutsi Türan</option>
+      <option value="123456">Dr.Erhan Hızlı</option>
+      <option value="474564567">Dr.Doğukan Karasu</option>
+      <option value="102564951">Prof.Dr.Ege Terzi</option>
+      <option value="741235786">Dr.Halil Akbaş</option>
+      <option >---Göz Hastalıkları--</option>
+      <option value="845315732">Prof.Dr.Simay Samancı</option>
+      <option value="154245132">Prof.Yağmur Yılmaz</option>
+      <option value="120457365">Dr.Ahmet Ziya</option>
+      <option >---Çocuk Hastalıkları--</option>
+      <option value="542135484">Prof.Dr.Mehmet Toprak</option>
+      <option value="354159654">Dr.Mehmet Toprak</option>
+      <option value="620416548">Dr.Aleyna Turgay</option>
+      <option >---Beslenme ve Diyet--</option>
+      <option value="542135484">Prof.Dr.İrem Yılmaz</option>
+      <option value="354159654">Dr.Emir Hizli</option>
+      <option value="620416548">Dr.Efe Egeli</option>
+      
+      
+    </select>
+  </div>
+   
+    <div class="form-group">
+    <label for="exampleFormControlSelect1">Tarih</label>
+    <input type="date" id="Tarih" name="Tarih">
+  
+  </div>
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Saat</label>
+    <select class="form-control" id="Saat" name="Saat">
+      <option value="09:00">09:00</option>
+      <option value="10:00">10:00</option>
+      <option value="11:00">11:00</option>
+      <option value="13:00">13:00</option>
+      <option value="14:00">14:00</option>
+      <option value="15:00">15:00</option>
+      <option value="16:00">15:00</option>
+      
+     
+    </select>
+  </div>
+  
+  
+<input type="submit" name="submit" value="Randevuyu Düzenle" class="btn btn-primary"  onclick="return confirm('Randevunuzu onaylıyor musunuz?');">
+</form>
+ <?php }
+
+} else { echo "0 results"; }
+$conn->close();
+?>
+  
+
+</div>
+
+</body>
+</html>
